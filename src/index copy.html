@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web-Crash</title>
+</head>
+
+<body>
+  <script>
+    function appendToBody(content) {
+      var div = document.createElement('div');
+      div.innerHTML = content;
+      document.body.appendChild(div);
+    }
+    if ('serviceWorker' in navigator) {
+      appendToBody('Service worker 支持');
+      /*
+       * 使用 Service Worker 的必要条件, https://developers.google.com/web/fundamentals/primers/service-workers/#%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6
+       * 1. localhost可以
+       * 2. HTTPS
+       * 2. 
+       * https://jakearchibald.github.io/isserviceworkerready/
+       */ 
+
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).then(function (reg) {
+          appendToBody('Service worker registration succeeded. Scope is ' + reg.scope);
+
+          var HEARTBEAT_INTERVAL = 5 * 1000; // 每五秒发一次心跳
+          var sessionId = Date.now(); // uuid();
+          function heartbeat () {
+            const memory = window.performance.memory;
+            navigator.serviceWorker.controller.postMessage({
+              type: 'heartbeat',
+              id: sessionId,              
+              href: window.location.href,
+              jsHeapSizeLimit: (memory.jsHeapSizeLimit/1024/1024).toFixed(2) + "MB",
+              totalJSHeapSize:(memory.totalJSHeapSize/1024/1024).toFixed(2) + "MB", 
+              usedJSHeapSize:(memory.usedJSHeapSize/1024/1024).toFixed(2) + "MB", 
+              // 附加信息，如果页面 crash，上报的附加数据
+            });
+          }
+          window.addEventListener("beforeunload", function () {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'unload',
+              id: sessionId
+            });
+          });
+          setInterval(heartbeat, HEARTBEAT_INTERVAL);
+          heartbeat();
+        }).catch(function (error) {
+          appendToBody('Service worker registration failed with ' + error);
+        });
+      });
+
+    } else {
+      appendToBody('Service worker 不支持');
+    }
+  </script>
+</body>
+
+</html>

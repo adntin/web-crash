@@ -1,0 +1,8 @@
+{
+  "name": "web-crash",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/adntin/web-crash.git",
+  "author": "linbin <linbin@leedarson.com>",
+  "license": "MIT"
+}

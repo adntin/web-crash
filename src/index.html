@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web-Crash</title>
+</head>
+
+<body>
+  <script>
+    function appendToBody(content) {
+      var div = document.createElement('div');
+      div.innerHTML = content;
+      document.body.appendChild(div);
+    }
+    // if ('serviceWorker' in navigator) {
+    //   appendToBody('Service worker 支持');
+    // }else {
+    //   appendToBody('Service worker 不支持');
+    // }
+
+    // fetch：iOS 10.2 (包括此版本)之前不支持
+    if (fetch) {
+      appendToBody('fetch 支持'); 
+    } else {
+      appendToBody('fetch 不支持');
+    }
+    // AbortController：iOS 11.2 (包括此版本)之前不支持
+    if (AbortController) {
+      appendToBody('AbortController 支持'); 
+    } else {
+      appendToBody('AbortController 不支持');
+    }
+    // Promise.all：iOS 11.2 (包括此版本)之前不支持
+    if (Promise.all) {
+      appendToBody('Promise.all 支持'); 
+    } else {
+      appendToBody('Promise.all 不支持');
+    }
+    // Promise.any：iOS 13.7 (包括此版本)之前不支持
+    if (Promise.any) {
+      appendToBody('Promise.any 支持'); 
+    } else {
+      appendToBody('Promise.any 不支持');
+    }
+  </script>
+</body>
+
+</html>
